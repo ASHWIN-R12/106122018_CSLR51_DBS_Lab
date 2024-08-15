@@ -1,0 +1,172 @@
+B.TECH. COMPUTER SCIENCE AND ENGINEERING – July - Dec, 2024
+CSLR51 – Database Management Systems Laboratory
+#Session: 03 || Date: 01/08/2024
+Due: 01/08/2024 at 5.30 PM
+Relational Database Design – Company Schema
+
+Name: Ashwin R
+Roll No. : 106122018
+
+
+1. Design the Company Schema given in the text book named “Fundamentals of Database
+Systems” authored by Ramez Elmasri and Shamkant B. Navathe. The e-copy of the text book
+is uploaded in the moodle.
+	CREATE TABLE EMPLOYEE
+	    -> ( Fname VARCHAR(15) NOT NULL,
+	    -> Minit CHAR,
+	    -> Lname VARCHAR(15) NOT NULL,
+	    -> Ssn CHAR(9) NOT NULL,
+	    -> Bdate DATE,
+	    -> Address VARCHAR(30),
+	    -> Sex CHAR,
+	    -> Salary DECIMAL(10,2),
+	    -> Super_ssn CHAR(9),
+	    -> Dno INT NOT NULL,
+	    -> PRIMARY KEY (Ssn));
+	    
+	CREATE TABLE DEPARTMENT
+	    -> ( Dname VARCHAR(15) NOT NULL,
+	    -> Dnumber INT NOT NULL,
+	    -> Mgr_ssn CHAR(9) NOT NULL,
+	    -> Mgr_start_date DATE,
+	    -> PRIMARY KEY (Dnumber),
+	    -> UNIQUE (Dname),
+	    -> FOREIGN KEY (Mgr_ssn) REFERENCES EMPLOYEE(Ssn) );
+
+	CREATE TABLE DEPT_LOCATIONS
+	    -> ( Dnumber INT NOT NULL,
+	    -> Dlocation VARCHAR(15) NOT NULL,
+	    -> PRIMARY KEY (Dnumber, Dlocation),
+	    -> FOREIGN KEY (Dnumber) REFERENCES DEPARTMENT(Dnumber));
+
+	CREATE TABLE PROJECT
+	    -> ( Pname VARCHAR(15) NOT NULL,
+	    -> Pnumber INT NOT NULL,
+	    -> Plocation VARCHAR(15),
+	    -> Dnum INT NOT NULL,
+	    -> PRIMARY KEY (Pnumber),
+	    -> UNIQUE (Pname),
+	    -> FOREIGN KEY (Dnum) REFERENCES DEPARTMENT(Dnumber) );
+
+	CREATE TABLE WORKS_ON
+	    -> ( Essn CHAR(9) NOT NULL,
+	    -> Pno INT NOT NULL,
+	    -> Hours DECIMAL(3,1) NOT NULL,
+	    -> PRIMARY KEY (Essn, Pno),
+	    -> FOREIGN KEY (Essn) REFERENCES EMPLOYEE(Ssn),
+	    -> FOREIGN KEY (Pno) REFERENCES PROJECT(Pnumber) );
+	    
+	CREATE TABLE DEPENDENT
+	    -> ( Essn CHAR(9) NOT NULL,
+	    -> Dependent_name VARCHAR(15) NOT NULL,
+	    -> Sex CHAR,
+	    -> Bdate DATE,
+	    -> Relationship VARCHAR(8),
+	    -> PRIMARY KEY (Essn, Dependent_name),
+	    -> FOREIGN KEY (Essn) REFERENCES EMPLOYEE(Ssn) );
+	    
+		+------------------+
+		| Tables_in_ash_18 |
+		+------------------+
+		| DEPARTMENT       |
+		| DEPENDENT        |
+		| DEPT_LOCATIONS   |
+		| EMPLOYEE         |
+		| PROJECT          |
+		| WORKS_ON         |
+		+------------------+
+	    
+2. Execute basic queries (Chapter 5) in Company Schema involving only two tables: Employee
+and Department to simulate the following keywords:
+CREATE, DELETE, UPDATE (or MODIFY), INSERT, ALTER, Entity Integrity Constraints and
+Referential Integrity Constraints.
+
+A) CREATE TABLE WORKS_ON_INFO
+    -> ( Emp_name VARCHAR(15),
+    -> Proj_name VARCHAR(15),
+    -> Hours_per_week DECIMAL(3,1) );
+
+	+------------------+
+	| Tables_in_ash_18|
+	+------------------+
+	| DEPARTMENT       |
+	| DEPENDENT        |
+	| DEPT_LOCATIONS   |
+	| EMPLOYEE         |
+	| PROJECT          |
+	| WORKS_ON         |
+	| WORKS_ON_INFO    |
+	+------------------+
+	    	
+B) INSERT INTO EMPLOYEE VALUES('Richard','K','Marini','653298653','1962-12-30','98 Oak Forest, Katy, TX','M',37000,'653298653',4);
+	+---------+-------+--------+-----------+------------+-------------------------+------+----------+-----------+-----+
+	| Fname   | Minit | Lname  | Ssn       | Bdate      | Address                 | Sex  | Salary   | Super_ssn | Dno |
+	+---------+-------+--------+-----------+------------+-------------------------+------+----------+-----------+-----+
+	| Richard | K     | Marini | 653298653 | 1962-12-30 | 98 Oak Forest, Katy, TX | M    | 37000.00 | 653298653 |   4 |
+	+---------+-------+--------+-----------+------------+-------------------------+------+----------+-----------+-----+
+	
+C) DELETE FROM EMPLOYEE WHERE Lname = 'Marini';
+	    	Empty set (0.00 sec)
+	    	
+D) UPDATE EMPLOYEE SET Salary = Salary * 1.1 WHERE Dno = 4;
+
+	+---------+-------+--------+-----------+------------+-------------------------+------+----------+-----------+-----+
+	| Fname   | Minit | Lname  | Ssn       | Bdate      | Address                 | Sex  | Salary   | Super_ssn | Dno |
+	+---------+-------+--------+-----------+------------+-------------------------+------+----------+-----------+-----+
+	| Richard | K     | Marini | 653298653 | 1962-12-30 | 98 Oak Forest, Katy, TX | M    | 40700.00 | 653298653 |   4 |
+	+---------+-------+--------+-----------+------------+-------------------------+------+----------+-----------+-----+
+
+E) ALTER TABLE EMPLOYEE CHANGE COLUMN Sex Gender CHAR;
+	+-----------+---------------+------+-----+---------+-------+
+	| Field     | Type          | Null | Key | Default | Extra |
+	+-----------+---------------+------+-----+---------+-------+
+	| Fname     | varchar(15)   | NO   |     | NULL    |       |
+	| Minit     | char(1)       | YES  |     | NULL    |       |
+	| Lname     | varchar(15)   | NO   |     | NULL    |       |
+	| Ssn       | char(9)       | NO   | PRI | NULL    |       |
+	| Bdate     | date          | YES  |     | NULL    |       |
+	| Address   | varchar(30)   | YES  |     | NULL    |       |
+	| Gender    | char(1)       | YES  |     | NULL    |       |
+	| Salary    | decimal(10,2) | YES  |     | NULL    |       |
+	| Super_ssn | char(9)       | YES  |     | NULL    |       |
+	| Dno       | int           | NO   |     | NULL    |       |
+	+-----------+---------------+------+-----+---------+-------+
+	
+3) Execute all the example queries in Chapter 6 pertaining to the Company Schema you have
+created in Q. No. 1.
+
+ a)SELECT Bdate, Address FROM EMPLOYEE WHERE Fname = 'Richard' AND Minit = 'K' AND Lname = 'Marini';
+	+------------+-------------------------+
+	| Bdate      | Address                 |
+	+------------+-------------------------+
+	| 1962-12-30 | 98 Oak Forest, Katy, TX |
+	+------------+-------------------------+
+
+ b)SELECT Fname, EMPLOYEE.LName, Address FROM EMPLOYEE, DEPARTMENT WHERE DEPARTMENT.Dname = 'Research' AND DEPARTMENT.Dnumber = EMPLOYEE.Dno;
+	Empty set (0.00 sec)
+
+ c)SELECT E.Fname, E.Lname, S.Fname, S.Lname FROM EMPLOYEE AS E, EMPLOYEE AS S WHERE E.Super_ssn = S.Ssn;
+	+---------+--------+---------+--------+
+	| Fname   | Lname  | Fname   | Lname  |
+	+---------+--------+---------+--------+
+	| Richard | Marini | Richard | Marini |
+	+---------+--------+---------+--------+
+	
+ d)SELECT * FROM EMPLOYEE WHERE (Salary BETWEEN 30000 AND 50000) AND Dno = 4;
+ 	+---------+-------+--------+-----------+------------+-------------------------+--------+----------+-----------+-----+
+	| Fname   | Minit | Lname  | Ssn       | Bdate      | Address                 | Gender | Salary   | Super_ssn | Dno |
+	+---------+-------+--------+-----------+------------+-------------------------+--------+----------+-----------+-----+
+	| Richard | K     | Marini | 653298653 | 1962-12-30 | 98 Oak Forest, Katy, TX | M      | 40700.00 | 653298653 |   4 |
+	+---------+-------+--------+-----------+------------+-------------------------+--------+----------+-----------+-----+
+
+ e)DELETE FROM EMPLOYEE WHERE Dno = 5;
+	Query OK, 0 rows affected (0.00 sec)
+	
+ f)UPDATE EMPLOYEE SET Salary = Salary * 0.9 WHERE Dno = 4;
+ 	+---------+-------+--------+-----------+------------+-------------------------+--------+----------+-----------+-----+
+	| Fname   | Minit | Lname  | Ssn       | Bdate      | Address                 | Gender | Salary   | Super_ssn | Dno |
+	+---------+-------+--------+-----------+------------+-------------------------+--------+----------+-----------+-----+
+	| Richard | K     | Marini | 653298653 | 1962-12-30 | 98 Oak Forest, Katy, TX | M      | 40293.00 | 653298653 |   4 |
+	+---------+-------+--------+-----------+------------+-------------------------+--------+----------+-----------+-----+
+
+
